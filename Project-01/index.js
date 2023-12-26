@@ -10,18 +10,26 @@ const PORT = 8000;
 // Form data added into request body
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
-app
-  .route("/api/users/:id")
-  // .get((req, res) => {
-  //   return res.json({ status: "Pending" });
-  // })
-  .patch((req, res) => {
-    return res.json({ status: "Pending" });
-  })
-  .delete((req, res) => {
-    return res.json({ status: "Pending" });
-  });
+// Middleware
+// 1. Middleware functions have access to the request object(req) & response object(res) &
+//    the next middleware function in the application's request-response cycle.
+// 2. Execute any code
+// 3. Make changes to the request & response objects
+// 4. End the request cycle
+// 5. Call the next middleware function in the stack
+
+// Middleware 1
+app.use((req, res, next) => {
+  console.log("This is Middleware 1");
+  req.defaultUserName = "Sam";
+  next();
+});
+
+// Middleware 2
+app.use((req, res, next) => {
+  console.log("This is Middleware 2");
+  next();
+});
 
 // REST API
 
@@ -37,6 +45,7 @@ app.get("/users", (req, res) => {
 
 // Get users list as JSON
 app.get("/api/users", (req, res) => {
+  console.log("Default UserName - ", req.defaultUserName);
   res.json(users);
 });
 
@@ -44,15 +53,6 @@ app.get("/api/users/:id", (req, res) => {
   const id = req.params.id;
   const user = users.find((user) => user.id == id);
   res.json(user);
-});
-
-app.post("/api/users", (req, res) => {
-  // Todo: Create new user
-  let body = req.body;
-  users.push({ ...body, id: users.length + 1 });
-  fs.writeFile("./MOCK_DATA.json", JSON.stringify(users), (err, data) => {
-    return res.json({ status: "success", id: users.length + 1 });
-  });
 });
 
 app.listen(PORT, () => console.log(`Server started at ${PORT}`));
