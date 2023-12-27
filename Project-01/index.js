@@ -10,27 +10,6 @@ const PORT = 8000;
 // Form data added into request body
 app.use(express.urlencoded({ extended: true }));
 
-// Middleware
-// 1. Middleware functions have access to the request object(req) & response object(res) &
-//    the next middleware function in the application's request-response cycle.
-// 2. Execute any code
-// 3. Make changes to the request & response objects
-// 4. End the request cycle
-// 5. Call the next middleware function in the stack
-
-// Middleware 1
-app.use((req, res, next) => {
-  console.log("This is Middleware 1");
-  req.defaultUserName = "Sam";
-  next();
-});
-
-// Middleware 2
-app.use((req, res, next) => {
-  console.log("This is Middleware 2");
-  next();
-});
-
 // REST API
 
 // Get users list as HTML
@@ -45,7 +24,8 @@ app.get("/users", (req, res) => {
 
 // Get users list as JSON
 app.get("/api/users", (req, res) => {
-  console.log("Default UserName - ", req.defaultUserName);
+  // Added custom response header
+  res.setHeader("X-MyName", "John");  //  Always add X to custom headers
   res.json(users);
 });
 
